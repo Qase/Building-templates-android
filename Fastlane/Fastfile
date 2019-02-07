@@ -1,0 +1,88 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:android)
+
+platform :android do
+
+  desc "Runs all the tests"
+  lane :test do
+    gradle(task: "test")
+  end
+
+  desc "Builds debug apk"
+  lane :build_debug do
+    gradle(
+        task: "assemble",
+        build_type: "debug"
+    )
+  end
+  desc "Builds release apk"
+  lane :build_release do
+    gradle(
+        task: "assemble",
+        build_type: "release"
+    )
+  end
+
+  # Add this to your Fastfile
+  desc "Upload the APK to Slack channel"
+  private_lane :upload_to_slack do |options|
+    file_path = lane_context[SharedValues::GRADLE_APK_OUTPUT_PATH]
+    file_name = file_path.gsub(/\/.*\//, "")
+    sh "echo \"file_path " + file_name  + " to Slack\""
+    sh "echo \"Uploading " + file_name  + " to Slack\""
+    sh "curl https://slack.com/api/files.upload -F token=\"" + ENV["SLACK_TOKEN"] + "\" -F channels=\"" + ENV["SLACK_CHANNEL"] + "\" -F title=\"" + file_name + "\" -F filename=\"" + file_name + "\" -F file=\"@" + file_path+"\""
+    slack(message: "Uploaded to slack")
+  end
+
+  lane :build_debug_to_slack do
+    gradle(task: "assembleDebug")
+    upload_to_slack()
+  end
+
+  lane :build_release_to_slack do
+    gradle(task: "assembleRelease")
+    upload_to_slack()
+  end
+
+  error do |lane, exception|
+    slack(
+        message: exception.message,
+        success: false
+    )
+  end
+
+  lane :build_debug_to_crashlytics do
+    # build debug variant
+    build_android_app(task: "assembleDebug")
+    # upload to Beta by Crashlytics
+    crashlytics(
+        api_token: ENV["CRASHLYTICS_API_TOKEN"],
+        build_secret: ENV["CRASHLYTICS_BUILD_SECRET"],
+        notes: "Automatically built debug version from gitlab CI"
+    )
+  end
+
+  lane :build_release_to_crashlytics do
+    # build debug variant
+    build_android_app(task: "assembleDebug")
+    # upload to Beta by Crashlytics
+    crashlytics(
+        api_token: ENV["CRASHLYTICS_API_TOKEN"],
+        build_secret: ENV["CRASHLYTICS_BUILD_SECRET"],
+        notes: "Automatically built release version from gitlab CI"
+    )
+  end
+end
