@@ -77,7 +77,7 @@ platform :android do
 
   lane :build_release_to_crashlytics do
     # build debug variant
-    build_android_app(task: "assembleDebug")
+    build_android_app(task: "assembleRelease")
     # upload to Beta by Crashlytics
     crashlytics(
         api_token: ENV["CRASHLYTICS_API_TOKEN"],
