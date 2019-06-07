@@ -54,13 +54,13 @@ platform :android do
     slack(message: "Uploaded to slack")
   end
 
- desc "Builds debug variant of app and sends it to slack defined by :ENV[\"SLACK_TOKEN"] and ENV["SLACK_CHANNEL\"]"
+ desc "Builds debug variant of app and sends it to slack defined by :ENV\[\"SLACK_TOKEN"] and ENV["SLACK_CHANNEL\"\]"
  lane :build_debug_to_slack do
     gradle(task: "assembleDebug")
     upload_to_slack()
   end
 
- desc "Builds release variant of app and sends it to slack defined by :ENV[\"SLACK_TOKEN\"] and ENV["SLACK_CHANNEL\"]"
+ desc "Builds release variant of app and sends it to slack defined by :ENV\[\"SLACK_TOKEN\"\] and ENV["SLACK_CHANNEL\"\]"
  lane :build_release_to_slack do
     gradle(task: "assembleRelease")
     upload_to_slack()
@@ -73,7 +73,7 @@ platform :android do
     )
  end
 
-  desc "Builds debug variant of app and sends it to crashlytics defined by :ENV[\"CRASHLYTICS_API_TOKEN\"], ENV[\"CRASHLYTICS_BUILD_SECRET\"] and ENV[\"CRASHLYTICS_GROUPS_DEBUG\"]"
+  desc "Builds debug variant of app and sends it to crashlytics defined by :ENV\[\"CRASHLYTICS_API_TOKEN\"\], ENV\[\"CRASHLYTICS_BUILD_SECRET\"\] and ENV\[\"CRASHLYTICS_GROUPS_DEBUG\"\]"
   lane :build_debug_to_crashlytics do
     # build debug variant
     build_android_app(task: "assembleDebug")
@@ -86,7 +86,7 @@ platform :android do
     )
   end
 
-  desc "Builds debug variant of app and sends it to crashlytics defined by :ENV[\"CRASHLYTICS_API_TOKEN\"], ENV[\"CRASHLYTICS_BUILD_SECRET\"] and ENV[\"CRASHLYTICS_GROUPS_DEBUG\"]"
+  desc "Builds debug variant of app and sends it to crashlytics defined by :ENV\[\"CRASHLYTICS_API_TOKEN\"\], ENV\[\"CRASHLYTICS_BUILD_SECRET\"\] and ENV\[\"CRASHLYTICS_GROUPS_DEBUG\"\]"
   lane :build_release_to_crashlytics do
     # build debug variant
     build_android_app(task: "assembleRelease")
