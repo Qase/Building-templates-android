@@ -98,4 +98,20 @@ platform :android do
         notes: "Automatically built release version from gitlab CI"
     )
   end
+
+  desc "Builds debug variant of app and sends it to App distribution defined by :ENV\[\"FIREBASE_TOKEN\"\]"
+  lane :build_debug_to_firebase do
+    # build debug variant
+    build_android_app(task: "assembleDebug")
+    # upload to App distribution
+    gradle(task: "appDistributionUploadDebug")
+  end
+
+  desc "Builds release variant of app and sends it to App distribution defined by :ENV\[\"FIREBASE_TOKEN\"\]"
+  lane :build_release_to_firebase do
+    # build release variant
+    build_android_app(task: "assembleRelease")
+    # upload to App distribution
+    gradle(task: "appDistributionUploadRelease")
+  end
 end
