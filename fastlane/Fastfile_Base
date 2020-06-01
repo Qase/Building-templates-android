@@ -87,15 +87,16 @@ platform :android do
   end
 
   desc "Builds release variant of app and sends it to app tester"
-  lane :build_release_to_firebase do |options|
+  lane :build_release_to_firebase do
     # build release variant
     build_android_app(task: "assembleDebug")
     # upload to Firebase
+    commit = last_git_commit
     firebase_app_distribution(
                   app: ENV["MOBILESDK_APP_ID"],
                   groups: ENV["TESTER_GROUPS"],
                   firebase_cli_token: ENV["FIREBASE_TOKEN"],
-                  release_notes: options[:release_notes] || "Automatically build from CI."
+                  release_notes: (git_branch + ": " + commit[:message] + ", " + commit[:author] )
               )
   end
 end
