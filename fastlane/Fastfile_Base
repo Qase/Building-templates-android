@@ -92,11 +92,12 @@ platform :android do
     build_android_app(task: "assembleDebug")
     # upload to Firebase
     commit = last_git_commit
+    branch = git_branch
     firebase_app_distribution(
                   app: ENV["MOBILESDK_APP_ID"],
                   groups: ENV["TESTER_GROUPS"],
                   firebase_cli_token: ENV["FIREBASE_TOKEN"],
-                  release_notes: (git_branch + ": " + commit[:message] + ", " + commit[:author] )
+                  release_notes: (branch + ": " + commit[:message] + ", " + commit[:author] )
               )
   end
 end
