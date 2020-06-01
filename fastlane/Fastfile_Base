@@ -73,29 +73,28 @@ platform :android do
     )
  end
 
-  desc "Builds debug variant of app and sends it to crashlytics defined by :ENV\[\"CRASHLYTICS_API_TOKEN\"\], ENV\[\"CRASHLYTICS_BUILD_SECRET\"\] and ENV\[\"CRASHLYTICS_GROUPS_DEBUG\"\]"
-  lane :build_debug_to_crashlytics do
+  desc "Builds debug variant of app and sends it to app tester
+  lane :build_debug_to_firebase do
     # build debug variant
     build_android_app(task: "assembleDebug")
-    # upload to Beta by Crashlytics
-    crashlytics(
-        api_token: ENV["CRASHLYTICS_API_TOKEN"],
-        build_secret: ENV["CRASHLYTICS_BUILD_SECRET"],
-        groups: ENV["CRASHLYTICS_GROUPS_DEBUG"],
-        notes: "Automatically built debug version from gitlab CI"
-    )
+    # upload to Firebase
+    firebase_app_distribution(
+                  app: ENV["MOBILESDK_APP_ID"],
+                  groups: ENV["TESTER_GROUPS"],
+                  firebase_cli_token: ENV["FIREBASE_TOKEN"],
+                  release_notes: options[:release_notes] || "Automatically build from CI."
+              )
   end
 
-  desc "Builds debug variant of app and sends it to crashlytics defined by :ENV\[\"CRASHLYTICS_API_TOKEN\"\], ENV\[\"CRASHLYTICS_BUILD_SECRET\"\] and ENV\[\"CRASHLYTICS_GROUPS_DEBUG\"\]"
-  lane :build_release_to_crashlytics do
-    # build debug variant
-    build_android_app(task: "assembleRelease")
-    # upload to Beta by Crashlytics
-    crashlytics(
-        api_token: ENV["CRASHLYTICS_API_TOKEN"],
-        build_secret: ENV["CRASHLYTICS_BUILD_SECRET"],
-        groups: ENV["CRASHLYTICS_GROUPS_RELEASE"],
-        notes: "Automatically built release version from gitlab CI"
-    )
+  desc "Builds release variant of app and sends it to app tester
+  lane :build_release_to_firebase do
+    # build release variant
+    build_android_app(task: "assembleDebug")
+    # upload to Firebase
+    firebase_app_distribution(
+                  app: ENV["MOBILESDK_APP_ID"],
+                  groups: ENV["TESTER_GROUPS"],
+                  firebase_cli_token: ENV["FIREBASE_TOKEN"],
+                  release_notes: options[:release_notes] || "Automatically build from CI."
+              )
   end
-end
