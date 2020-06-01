@@ -98,3 +98,4 @@ platform :android do
                   release_notes: options[:release_notes] || "Automatically build from CI."
               )
   end
+end
