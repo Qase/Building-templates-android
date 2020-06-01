@@ -73,7 +73,7 @@ platform :android do
     )
  end
 
-  desc "Builds debug variant of app and sends it to app tester
+  desc "Builds debug variant of app and sends it to app tester"
   lane :build_debug_to_firebase do
     # build debug variant
     build_android_app(task: "assembleDebug")
@@ -86,7 +86,7 @@ platform :android do
               )
   end
 
-  desc "Builds release variant of app and sends it to app tester
+  desc "Builds release variant of app and sends it to app tester"
   lane :build_release_to_firebase do
     # build release variant
     build_android_app(task: "assembleDebug")
