@@ -73,31 +73,19 @@ platform :android do
     )
  end
 
-  desc "Builds debug variant of app and sends it to app tester"
-  lane :build_debug_to_firebase do |options|
+ desc "Builds debug variant of app and sends it to App distribution defined by :ENV\[\"FIREBASE_TOKEN\"\]"
+ lane :build_debug_to_firebase do
     # build debug variant
     build_android_app(task: "assembleDebug")
-    # upload to Firebase
-    firebase_app_distribution(
-                  app: ENV["MOBILESDK_APP_ID"],
-                  groups: ENV["TESTER_GROUPS"],
-                  firebase_cli_token: ENV["FIREBASE_TOKEN"],
-                  release_notes: options[:release_notes] || "Automatically build from CI."
-              )
-  end
+    # upload to App distribution
+    gradle(task: "appDistributionUploadDebug")
+ end
 
-  desc "Builds release variant of app and sends it to app tester"
+ desc "Builds release variant of app and sends it to App distribution defined by :ENV\[\"FIREBASE_TOKEN\"\]"
   lane :build_release_to_firebase do
     # build release variant
-    build_android_app(task: "assembleDebug")
-    # upload to Firebase
-    commit = last_git_commit
-    branch = git_branch
-    firebase_app_distribution(
-                  app: ENV["MOBILESDK_APP_ID"],
-                  groups: ENV["TESTER_GROUPS"],
-                  firebase_cli_token: ENV["FIREBASE_TOKEN"],
-                  release_notes: (branch + ": " + commit[:message] + ", " + commit[:author] )
-              )
-  end
+    build_android_app(task: "assembleRelease")
+    # upload to App distribution
+    gradle(task: "appDistributionUploadRelease")
+ end
 end
